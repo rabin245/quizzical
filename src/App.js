@@ -8,17 +8,18 @@ function App() {
   const [start, setStart] = useState(false);
   const [questionList, setQuestionList] = useState([]);
   const [isFetched, setIsFetched] = useState(false);
+  const [userAnswers, setUserAnswers] = useState([]);
 
   useEffect(() => {
     const abortController = new AbortController();
 
     try {
       const fetchData = async () => {
-        const response = await fetch("https://opentdb.com/api.php?amount=5");
+        const response = await fetch(
+          "https://opentdb.com/api.php?amount=5&type=multiple"
+        );
         const data = await response.json();
         await setQuestionList(data.results);
-        await console.log("logging data");
-        await console.log(questionList);
       };
       fetchData();
       setIsFetched(true);
@@ -33,6 +34,14 @@ function App() {
     setStart(true);
   }
 
+  function handleAnswer(answer, index) {
+    setUserAnswers((prevAnswers) => {
+      const newAnswers = [...prevAnswers];
+      newAnswers[index] = answer;
+      return newAnswers;
+    });
+  }
+
   function page() {
     const startPage = (
       <>
@@ -44,15 +53,16 @@ function App() {
 
     const quizPage = (
       <>
-        <Quiz />
+        <Quiz data={questionList} handleAnswer={handleAnswer} />
       </>
     );
 
-    if (start && isFetched) {
-      return quizPage;
-    } else {
-      return startPage;
-    }
+    // if (start && isFetched) {
+    //   return quizPage;
+    // } else {
+    //   return startPage;
+    // }
+    return quizPage;
   }
 
   return <div className="App">{page()}</div>;
