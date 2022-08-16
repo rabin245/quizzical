@@ -45,8 +45,6 @@ function App() {
   function page() {
     const startPage = (
       <>
-        <img className="blob-bottom" src={blob_1} alt="blob" />
-        <img className="blob-top" src={blob_2} alt="blob" />
         <Start onClick={startQuiz} />
       </>
     );
@@ -57,15 +55,20 @@ function App() {
       </>
     );
 
-    // if (start && isFetched) {
-    //   return quizPage;
-    // } else {
-    //   return startPage;
-    // }
-    return quizPage;
+    if (start && isFetched) {
+      return quizPage;
+    } else {
+      return startPage;
+    }
   }
 
-  return <div className="App">{page()}</div>;
+  return (
+    <div className="App">
+      <img className="blob-bottom" src={blob_1} alt="blob" />
+      <img className="blob-top" src={blob_2} alt="blob" />
+      {page()}
+    </div>
+  );
 }
 
 export default App;
