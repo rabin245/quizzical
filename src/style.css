@@ -105,9 +105,20 @@ body {
 }
 
 .answer {
+  /* chosen answer */
   /* background-color: #d6dbf5; */
+
+  /* correct answer */
+  /* background: #94D7A2; */
+
+  /* incorrect answer */
+  /* background: #F8BCBC;*/
+
+  /* faded answer */
+  /* opacity: 0.5; */
+
   border: 0.794239px solid #4d5b9e;
-  border-radius: 7.94239px;
+  border-radius: 8px;
   margin-right: 12px;
   cursor: pointer;
 }

@@ -6,9 +6,11 @@ import Quiz from "./components/Quiz";
 
 function App() {
   const [start, setStart] = useState(false);
-  const [questionList, setQuestionList] = useState([]);
+  const [questionInfoList, setQuestionInfoList] = useState([]);
   const [isFetched, setIsFetched] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -19,7 +21,7 @@ function App() {
           "https://opentdb.com/api.php?amount=5&type=multiple"
         );
         const data = await response.json();
-        await setQuestionList(data.results);
+        await setQuestionInfoList(data.results);
       };
       fetchData();
       setIsFetched(true);
@@ -37,9 +39,19 @@ function App() {
   function handleAnswer(answer, index) {
     setUserAnswers((prevAnswers) => {
       const newAnswers = [...prevAnswers];
-      newAnswers[index] = answer;
+      newAnswers[index] = {
+        answer,
+        correct: answer === questionInfoList[index].correct_answer,
+      };
       return newAnswers;
     });
+  }
+
+  function checkCorrectAnswers() {
+    setCorrectAnswersCount(
+      userAnswers.filter((answer) => answer.correct).length
+    );
+    setIsFinished(true);
   }
 
   function page() {
@@ -51,7 +63,14 @@ function App() {
 
     const quizPage = (
       <>
-        <Quiz data={questionList} handleAnswer={handleAnswer} />
+        <Quiz
+          data={questionInfoList}
+          handleAnswer={handleAnswer}
+          userAnswers={userAnswers}
+          correctAnswersCount={correctAnswersCount}
+          checkCorrectAnswers={checkCorrectAnswers}
+          isFinished={isFinished}
+        />
       </>
     );
 

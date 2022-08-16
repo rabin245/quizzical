@@ -2,7 +2,14 @@ import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
 
 function Quiz(props) {
-  const { data, handleAnswer } = props;
+  const {
+    data,
+    handleAnswer,
+    correctAnswersCount,
+    checkCorrectAnswers,
+    isFinished,
+    userAnswers,
+  } = props;
 
   const [questionList, setQuestionList] = useState(
     data.map((data) => data.question)
@@ -20,9 +27,40 @@ function Quiz(props) {
     })
   );
 
-  const answerButtonStyle = {
-    backgroundColor: "#d6dbf5",
-    border: "none",
+  const [correctAnswersList, setCorrectAnswersList] = useState(
+    data.map((data) => data.correct_answer)
+  );
+
+  const answerButtonStyle = (chosen, index) => {
+    // game is not finished
+    if (!isFinished) {
+      if (chosen) {
+        return {
+          backgroundColor: "#d6dbf5",
+          border: "none",
+        };
+      }
+    } else {
+      // game is not finished
+      // chosen answer is correct
+      if (chosen && userAnswers[index].correct) {
+        return {
+          backgroundColor: "#94D7A2",
+          border: "none",
+        };
+      }
+      // chosen answer is incorrect
+      else if (chosen && !userAnswers[index].correct) {
+        return {
+          backgroundColor: "#F8BCBC",
+          opacity: "0.5",
+        };
+      } else {
+        return {
+          opacity: "0.5",
+        };
+      }
+    }
   };
 
   function replaceEntities(str) {
@@ -40,7 +78,7 @@ function Quiz(props) {
     );
   }
 
-  function choseAnswer(index, id) {
+  function chooseAnswer(index, id) {
     setAnswerList((prevAnswers) => {
       return prevAnswers.map((answersList, i) => {
         if (i === index) {
@@ -71,11 +109,12 @@ function Quiz(props) {
                   className="answer"
                   key={i}
                   onClick={() => {
-                    console.log("clicked on", answer, i);
-                    choseAnswer(index, answerObj.id);
-                    handleAnswer(answer, index);
+                    if (!isFinished) {
+                      chooseAnswer(index, answerObj.id);
+                      handleAnswer(answer, index);
+                    }
                   }}
-                  style={answerObj.chosen ? answerButtonStyle : null}
+                  style={answerButtonStyle(answerObj.chosen, index)}
                 >
                   <span>{answer}</span>
                 </button>
@@ -92,10 +131,13 @@ function Quiz(props) {
       <div className="page-block">{returnQuestionBlock()}</div>
 
       <div className="button-block">
-        {/* <span className="remarks">You scored 3/5 correct answers</span> */}
-        <button className="btn check">
-          <span>Check Answers</span>
-          {/* <span>Play again</span> */}
+        {isFinished && (
+          <span className="remarks">
+            You scored {correctAnswersCount}/5 correct answers
+          </span>
+        )}
+        <button className="btn check" onClick={checkCorrectAnswers}>
+          <span>{isFinished ? "Play again" : "Check Answers"}</span>
         </button>
       </div>
     </div>
