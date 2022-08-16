@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { nanoid } from "nanoid";
 
 function Quiz(props) {
@@ -31,7 +31,8 @@ function Quiz(props) {
     data.map((data) => data.correct_answer)
   );
 
-  const answerButtonStyle = (chosen, index) => {
+  const answerButtonStyle = (answerObj, index) => {
+    const { answer, chosen } = answerObj;
     // game is not finished
     if (!isFinished) {
       if (chosen) {
@@ -42,15 +43,15 @@ function Quiz(props) {
       }
     } else {
       // game is not finished
-      // chosen answer is correct
-      if (chosen && userAnswers[index].correct) {
+      // correct answer
+      if (answer === correctAnswersList[index]) {
         return {
           backgroundColor: "#94D7A2",
           border: "none",
         };
       }
       // chosen answer is incorrect
-      else if (chosen && !userAnswers[index].correct) {
+      if (chosen && !userAnswers[index].correct) {
         return {
           backgroundColor: "#F8BCBC",
           opacity: "0.5",
@@ -114,7 +115,7 @@ function Quiz(props) {
                       handleAnswer(answer, index);
                     }
                   }}
-                  style={answerButtonStyle(answerObj.chosen, index)}
+                  style={answerButtonStyle(answerObj, index)}
                 >
                   <span>{answer}</span>
                 </button>

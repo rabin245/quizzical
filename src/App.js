@@ -48,10 +48,12 @@ function App() {
   }
 
   function checkCorrectAnswers() {
-    setCorrectAnswersCount(
-      userAnswers.filter((answer) => answer.correct).length
-    );
-    setIsFinished(true);
+    if (!isFinished) {
+      setCorrectAnswersCount(
+        userAnswers.filter((answer) => answer.correct).length
+      );
+      setIsFinished(true);
+    }
   }
 
   function page() {
