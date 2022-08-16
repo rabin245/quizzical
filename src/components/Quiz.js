@@ -1,35 +1,16 @@
-import { useState } from "react";
-import { nanoid } from "nanoid";
-
 function Quiz(props) {
   const {
-    data,
+    questionList,
+    answerList,
+    setAnswerList,
+    correctAnswersList,
     handleAnswer,
     correctAnswersCount,
     checkCorrectAnswers,
     isFinished,
     userAnswers,
+    restartGame,
   } = props;
-
-  const [questionList, setQuestionList] = useState(
-    data.map((data) => data.question)
-  );
-  const [answerList, setAnswerList] = useState(
-    data.map((data) => {
-      let answers = [...data.incorrect_answers, data.correct_answer];
-      answers = answers.sort(() => Math.random() - 0.5);
-
-      return answers.map((answer) => ({
-        id: nanoid(),
-        answer: answer,
-        chosen: false,
-      }));
-    })
-  );
-
-  const [correctAnswersList, setCorrectAnswersList] = useState(
-    data.map((data) => data.correct_answer)
-  );
 
   const answerButtonStyle = (answerObj, index) => {
     const { answer, chosen } = answerObj;
@@ -137,7 +118,16 @@ function Quiz(props) {
             You scored {correctAnswersCount}/5 correct answers
           </span>
         )}
-        <button className="btn check" onClick={checkCorrectAnswers}>
+        <button
+          className="btn check"
+          onClick={() => {
+            if (!isFinished) {
+              checkCorrectAnswers();
+            } else {
+              restartGame();
+            }
+          }}
+        >
           <span>{isFinished ? "Play again" : "Check Answers"}</span>
         </button>
       </div>
